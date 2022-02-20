@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: check-kernel
+spec:
+  validationFailureAction: audit
+  background: true
+  rules:
+  - name: kernel-validate
+    match:
+      resources:
+        kinds:
+          - Node
+    validate:
+      message: "Kernel is vulnerable to CVE-2022-0185."
+      pattern:
+        status:
+          nodeInfo:
+            kernelVersion: "!5.10.84-1 & !5.15.2-1"

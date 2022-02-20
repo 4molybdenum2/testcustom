@@ -1,0 +1,12 @@
+name: disallow-public-unprotected-front
+policies:
+  - disallow_public_unprotected_front.yaml
+resources:
+  - resource.yaml
+results:
+  - policy: disallow-public-unprotected-front
+    rule: require-kong-plugin-annotation
+    resource: bad-ingress-no-kong-plugin-exclude 
+    namespace: truc--platform-lab-dev
+    kind: Ingress
+    result: pass

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bad-ingress-no-kong-plugin-exclude
+  namespace: truc--platform-lab-dev
+  labels:
+    helm.sh/chart: front-standard-4.0.0
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: "test.np.digiforce.io"
+      http:
+        paths:
+          - path: /testpath
+            pathType: Prefix
+            backend:
+              service:
+                name: test
+                port:
+                  number: 80

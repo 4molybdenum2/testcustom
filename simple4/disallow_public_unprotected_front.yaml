@@ -1,0 +1,48 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-public-unprotected-front
+  annotations:
+    policies.kyverno.io/title: Disallow public front that are not protected with OpenID
+    policies.kyverno.io/category: Kong
+    policies.kyverno.io/subject: Ingress
+    policies.kyverno.io/description: >-
+      As all services are publicly available, the `digiforce.io` fronts should be protected with the Kong OpenID plugin.
+  labels:
+    app.kubernetes.io/instance: digipaas-adm
+spec:
+  background: true
+  failurePolicy: Ignore
+  schemaValidation: true
+  validationFailureAction: audit
+  webhookTimeoutSeconds: 5
+  rules:
+    - name: require-kong-plugin-annotation
+      match:
+        any:
+          - resources:
+              kinds:
+                - Ingress
+              selector:
+                matchLabels: 
+                  helm.sh/chart: front-standard-*
+      exclude:
+        any:
+          - resources:
+              kinds:
+                - Ingress
+              selector:
+                matchLabels:
+                  digipaas.digiforce.io/is-monitored: "true"
+          - resources:
+              kinds:
+                - Ingress
+              namespaces:
+                - "*--platform-lab-dev"
+      validate:
+        message: "Must have same label"
+        pattern:
+          metadata:
+            labels:
+              helm.sh/chart: front-standard-4.0.0
+                
